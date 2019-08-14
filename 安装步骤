@@ -1,0 +1,85 @@
+安装版本：redis_5.0.5
+目录：/usr/local/redis/
+
+cd /usr/local/src/
+yum -y install bzip2
+tar xjf redis_5.0.5_c7.tar.bz2
+mv redis ..
+cd ../redis/
+mkdir data log tmp
+vi redis.conf
+
+####以下为配置文件内容
+protected-mode no
+tcp-backlog 511
+timeout 300
+tcp-keepalive 60
+
+loglevel notice
+logfile /usr/local/redis/log/redis.log
+
+daemonize yes
+port 6379
+pidfile /usr/local/redis/tmp/redis.pid
+databases 16
+
+dir /usr/local/redis/data
+#save 900 1
+#save 300 10
+#save 60 10000
+rdbcompression yes
+rdbchecksum yes
+dbfilename dump.rdb
+stop-writes-on-bgsave-error yes
+
+replica-serve-stale-data yes
+replica-read-only yes
+replica-priority 50
+repl-disable-tcp-nodelay no
+repl-ping-replica-period 10
+repl-timeout 60
+repl-backlog-size 1mb
+repl-backlog-ttl 3600
+repl-diskless-sync no
+repl-diskless-sync-delay 5
+replica-ignore-maxmemory no
+#min-replicas-to-write 1
+#min-replicas-max-lag 10
+
+maxclients 10000
+maxmemory 10gb
+maxmemory-policy noeviction
+
+appendonly no
+aof-use-rdb-preamble no
+appendfilename appendonly.aof
+appendfsync everysec
+no-appendfsync-on-rewrite no
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+aof-load-truncated yes
+
+slowlog-log-slower-than 10000
+slowlog-max-len 128
+
+aof-rewrite-incremental-fsync yes
+
+hz 10
+
+lazyfree-lazy-eviction yes
+lazyfree-lazy-expire yes
+lazyfree-lazy-server-del yes
+replica-lazy-flush yes
+
+stream-node-max-bytes 4096
+stream-node-max-entries 100
+
+client-output-buffer-limit replica 2gb 1gb 60
+
+activedefrag yes
+######
+
+#启动与查看
+/usr/local/redis/bin/redis-server /usr/local/redis/redis.conf
+pgrep -lf redis
+/usr/local/redis/bin/redis-cli
